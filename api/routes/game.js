@@ -7,7 +7,7 @@ const { RewardService } = require('../services/rewardService');
 router.post('/submit', function (req, res) {
 	try {
 		const { signature, address, message } = req.body;
-		RewardService.sendTokens(address, 10);
+		RewardService.sendTokens(address, 1);
 	} catch (error) {
 		console.log(error)
 	}

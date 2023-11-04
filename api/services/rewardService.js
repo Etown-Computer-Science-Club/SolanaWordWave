@@ -9,8 +9,6 @@ class RewardService {
 		const senderPrivateKey = new Uint8Array(process.env.SOL_PRIVATE_KEY.split(','));
 		const senderKeypair = Keypair.fromSecretKey(senderPrivateKey);
 
-		console.log({ recipientAddress })
-
 		const transaction = new Transaction().add(
 			SystemProgram.transfer({
 				fromPubkey: senderKeypair.publicKey,
