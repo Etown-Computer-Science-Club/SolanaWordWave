@@ -19,13 +19,15 @@ const theme = extendTheme({
 });
 
 const endpoint = web3.clusterApiUrl("devnet");
-const wallet = new PhantomWalletAdapter();
+const wallets = [
+  new PhantomWalletAdapter()
+];
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
       <ConnectionProvider endpoint={endpoint}>
-        <WalletProvider wallets={[wallet]}>
+        <WalletProvider wallets={wallets}>
           <WalletModalProvider>
             <App />
           </WalletModalProvider>
