@@ -19,7 +19,7 @@ const EasyGame = () => {
       answer: selectedOption
     }
     console.log(`word: ${data.word} | diff: ${data.difficulty} | ans: ${data.answer} | `)
-    }
+  }
 
   return (
     <Box p={5} shadow="md" borderWidth="1px">
