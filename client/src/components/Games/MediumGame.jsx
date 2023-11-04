@@ -1,9 +1,9 @@
-import React from 'react';
+import { useState } from 'react';
 import { Box, Text, Input, Button, Flex } from '@chakra-ui/react';
 import handleSpeech from '../Speech';
 
 const MediumGame = ({ wordOfTheDay, onSentenceSubmit }) => {
-  const [sentence, setSentence] = React.useState('');
+  const [sentence, setSentence] = useState('');
   //const sentences = "Hello Hello Hello"
 
   return (
