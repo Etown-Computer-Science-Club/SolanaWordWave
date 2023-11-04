@@ -6,7 +6,7 @@ import {
   Heading,
 } from '@chakra-ui/react';
 
-const DifficultyCard = ({ title, description, tokens }) => {
+const DifficultyCard = ({ title, description, tokens, handleGameSelect }) => {
 	return (
 		<Box
 			borderWidth="1px"
@@ -21,7 +21,7 @@ const DifficultyCard = ({ title, description, tokens }) => {
 			<Text fontSize="2xl" fontWeight="bold" mb={4}>
 				Win {tokens} tokens
 			</Text>
-			<Button colorScheme="purple">Choose {title}</Button>
+			<Button colorScheme="purple" onClick={handleGameSelect}>Choose {title}</Button>
 		</Box>
 	);
 };
