@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Box } from '@chakra-ui/react';
 
 function Countdown() {
   const [timeRemaining, setTimeRemaining] = useState(getTimeRemainingUntilMidnight());
@@ -27,12 +28,12 @@ function Countdown() {
   }
 
   return (
-    <div>
-      <h2>Time Remaining Until Refresh:</h2>
+    <Box textAlign={"center"}>
+      <h2>Time Remaining:</h2>
       <p>
         {timeRemaining.hours} hours {timeRemaining.minutes} minutes {timeRemaining.seconds} seconds
       </p>
-    </div>
+    </Box>
   );
 }
 
