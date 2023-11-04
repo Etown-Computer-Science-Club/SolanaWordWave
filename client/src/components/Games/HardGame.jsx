@@ -7,6 +7,7 @@ const HardGame = () => {
   const partOfSpeach = "Noun"
   const definition = "Velocity is a measure of an object's speed in a specific direction. It is a vector quantity that describes the rate of change of an object's position with respect to time and includes both the magnitude and direction of motion. Velocity is commonly expressed in units like meters per second (m/s) in the International System of Units (SI) and is essential in the field of physics to describe the motion of objects."
   const wordDate = new Date();
+  const walletID = ""
   
   function onDefinitionSubmit () {
     const now = new Date();
@@ -15,7 +16,7 @@ const HardGame = () => {
       difficulty: "hard",
       answer: answer,
       wordDate: wordDate,
-      submitDate: now
+      walletID: walletID
     }
     console.log(`word: ${data.word} | diff: ${data.difficulty} | ans: ${data.answer} | `)
   }
