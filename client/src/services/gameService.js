@@ -22,15 +22,7 @@ export default class GameService {
 
 	}
 
-	static async submitGame(details) {
-		try {
-			console.log(details)
-			const response = await axios.post(`${API_URL}`, details);
+	static async submitGame() {
 
-			return response.data; // You might want to return the response data or handle it in some way.
-		} catch (error) {
-			console.error("Error submitting game:", error);
-			throw error; // You might want to handle the error more gracefully, maybe with a user-friendly error message.
-		}
 	}
 }
