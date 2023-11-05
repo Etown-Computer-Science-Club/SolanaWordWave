@@ -1,10 +1,11 @@
-import { Flex, Text, Image } from "@chakra-ui/react";
+import { Flex, Text, Image, useMediaQuery } from "@chakra-ui/react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useNavigate } from "react-router-dom";
 import Countdown from "./Countdown";
 
 function Navbar() {
 	const navigate = useNavigate();
+	const [isSmallScreen] = useMediaQuery('(max-width: 900px)');
 
   return (
     <Flex boxShadow="md" p="4" bgColor="#3d2c8d" justifyContent='space-between' alignItems='center'>
@@ -19,7 +20,8 @@ function Navbar() {
 				SolWordWave
 			</Text>
 		</Flex>
-		<Countdown />
+		{!isSmallScreen && <Countdown /> }
+		
 		<WalletMultiButton />
     </Flex>
   );
