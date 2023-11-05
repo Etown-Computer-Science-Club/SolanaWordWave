@@ -34,7 +34,6 @@ const EasyGame = () => {
       difficulty: "easy",
       answer: selectedOption
     }
-    console.log(message)
     setSuccess(await GameService.submitGame(message))
     onOpen()
   }

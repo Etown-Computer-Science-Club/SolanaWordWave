@@ -19,7 +19,7 @@ export default function PopUp ({isOpen, onClose, response}) {
             setTitle("Congratulations")
             setMessage("Thank you for playing, you have won tokens!")
         }
-        else if (response.status == "failure"){
+        else if (response.status == "incorrect"){
             setTitle("Better Luck Next Time")
             setMessage(`The correct answer was ${response.answer}`)
         }
