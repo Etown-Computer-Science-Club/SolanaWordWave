@@ -1,7 +1,7 @@
 # SolanaWordWave
 ## Description
 
-A daily vocabulary boot on the blockchain. Learn a word a day, powered by Solana.
+A daily vocabulary boost on the blockchain. Learn a word a day, powered by Solana.
 
 ## Features
 
