@@ -4,6 +4,7 @@ const { PublicKey, sign } = require('@solana/web3.js');
 const { RewardService } = require('../services/rewardService');
 const DbActivity = require('../database/models/activity');
 const DbWord = require('../database/models/word');
+const OpenAIService = require('../services/openAIService');
 
 router.get('/', async function (_req, res) {
 	const today = new Date();
@@ -26,7 +27,7 @@ router.get('/', async function (_req, res) {
 	}
 });
 
-router.post('/submit', async function (req, res) {
+router.post('/', async function (req, res) {
 	// const requiredProps = ['signature', 'address', 'message', 'wordDate', 'difficulty', 'answer'];
 
 	try {
@@ -85,7 +86,9 @@ function checkMediumSubmission(word, answer) {
 }
 
 function checkHardSubmission(word, answer) {
-
+	const result = OpenAIService.calculateCorrectnessScore(answer, word.def, word.pos);
+	console.log(result)
+	return result;
 }
 
 function formatDate(date) {
