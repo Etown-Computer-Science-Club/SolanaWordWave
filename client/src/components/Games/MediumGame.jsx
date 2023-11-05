@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Box, Text, Input, Button, Flex, Spacer, Heading, useDisclosure, Image } from '@chakra-ui/react';
+import { Box, Text, Input, Button, Flex, Spacer, Heading, useDisclosure, Image, Divider } from '@chakra-ui/react';
 import handleSpeech from '../Speech';
 import GameService from '../../services/gameService';
 import useSolanaSigner from '../../hooks/useSolanaSigner'
 import PopUp from './PopUp';
-//import { Icon } from '@chakra-ui/react';
-//import { FaMicrophone } from 'react-icons/fa';
 
 
 const MediumGame = () => {
@@ -55,26 +53,30 @@ const MediumGame = () => {
         <Heading fontSize="2xl">Medium Mode</Heading>
         <Spacer />
         </Flex>
-        <Text fontSize="lg" fontWeight="bold">Remember the Word</Text>
-        <Text mb={4}>Spell the word correctly after hearing it.</Text>
+        <Text fontSize="2xl" fontWeight="bold">Remember the Word</Text>
+        <Text fontSize="xl" mb={4}>Spell the word correctly after hearing it.</Text>
         <Flex columnGap="2px" alignItems="flex-end">
-        <Button mt={4} colorScheme={buttonColor} onClick={() => handleSpeech(data.def, buttonClicked, setButtonClicked, setButtonColor)}>
-        <Image src="volume.svg" w="6" px="1" />{buttonClicked}
+        <Button borderRadius ="2xl" h="50" mt={4} colorScheme={buttonColor} onClick={() => handleSpeech(data.def, buttonClicked, setButtonClicked, setButtonColor)}>
+        <Image src="volume.svg" w="7" px="1" /><Text fontSize="xl">{buttonClicked}</Text>
         </Button>
-        <Button mt={4} colorScheme={wordButtonColor} onClick={() => handleSpeech(data.word, wordButtonClicked, wordSetButtonClicked, setWordButtonColor)}>
-        <Image src="volume.svg" w="6" px="1" />{wordButtonClicked}
+        <Divider orientation='vertical' px='2' />
+        <Button borderRadius ="2xl" h="50" mt={4} colorScheme={wordButtonColor} onClick={() => handleSpeech(data.word, wordButtonClicked, wordSetButtonClicked, setWordButtonColor)}>
+        <Image src="volume.svg" w="7" px="1" /><Text fontSize="xl">{wordButtonClicked}</Text>
         </Button>
       </Flex>
 
       <Flex alignItems="baseline">
-        <Button mt={4} colorScheme="teal" onClick={() => onSentenceSubmit(sentence)}>
-          Submit
+        <Button borderRadius ="2xl" h="50" mt={4} colorScheme="teal" onClick={() => onSentenceSubmit(sentence)}>
+        <Text fontSize="xl">Submit</Text>
         </Button>
+        <Divider orientation='vertical' px='2' />
         <Input 
           placeholder="Type your word here..."
           value={sentence}
           spellcheck="false"
           onChange={(e) => setSentence(e.target.value)}
+          h="50"
+          borderRadius="2xl"
         />
         
         
