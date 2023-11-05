@@ -10,7 +10,7 @@ Activities.init({
 		autoIncrement: true,
 	},
 	walletID: {
-		type: DataTypes.INTEGER,
+		type: DataTypes.STRING,
 	},
 	wordDate: {
 		type: DataTypes.DATEONLY,
