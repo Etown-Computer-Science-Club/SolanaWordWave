@@ -5,6 +5,9 @@ var express = require('express');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+var sequelize = require('./database');
+sequelize.sync();
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var gameRouter = require('./routes/game');
