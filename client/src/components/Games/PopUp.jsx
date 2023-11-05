@@ -15,11 +15,11 @@ export default function PopUp ({isOpen, onClose, response}) {
     const [message, setMessage] = useState("");
 
     useEffect(() => {
-        if (response.state == "Success"){
+        if (response.status == "correct"){
             setTitle("Congratulations")
             setMessage("Thank you for playing, you have won tokens!")
         }
-        else if (response.state == "Failure"){
+        else if (response.status == "Failure"){
             setTitle("Better Luck Next Time")
             setMessage(`The correct answer was ${response.answer}`)
         }
@@ -27,7 +27,7 @@ export default function PopUp ({isOpen, onClose, response}) {
             setTitle("Error")
             setMessage("Please only sumbit an answer once")
         }
-      }, [response.state]);
+      }, [response.status]);
     
     
     return (

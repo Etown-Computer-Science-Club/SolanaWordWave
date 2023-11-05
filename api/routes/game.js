@@ -41,6 +41,12 @@ router.post('/', async function (_req, res) {
 });
 
 router.post('/submit', async function (req, res) {
+	const requirements = ['signature', 'address', 'message', 'wordDate', 'difficulty', 'answer'];
+	const missing = requirements.filter((param) => !req.body[param]);
+	if (missing.length > 0) {
+		return res.status(400).send(`Missing required parameter(s): ${missing.join(', ')}`);
+	}
+
 	try {
 		const { signature, address, message, wordDate, difficulty, answer } = req.body;
 
@@ -51,23 +57,22 @@ router.post('/submit', async function (req, res) {
 		const isValid = nacl.sign.detached.verify(decodedMessage, decodedSignature, decodedPublicKey);
 
 		if (isValid) {
-			const submissionStatus = checkSubmission(address, wordDate, difficulty, answer);
+			const submissionStatus = await checkSubmission(address, wordDate, difficulty, answer);
 			if (submissionStatus === "correct") {
 				await RewardService.sendTokens(address, TOKENS_TO_SEND[difficulty]);
 			}
 
-			return {
+			const word = await DbWord.findByPk(wordDate);
 
-			}
-
-			DbActivity.create({
+			await DbActivity.create({
 				wordDate: wordDate,
 				difficulty: difficulty,
 				walletID: address,
+			});
 
-			})
+			const returnedAnswer = difficulty === "medium" ? word.word : word.optans;
 
-			return res.json({ status: submissionStatus });
+			return res.json({ status: submissionStatus, returnedAnswer });
 		} else {
 			res.status(400).send('Invalid signature');
 		}
@@ -77,7 +82,7 @@ router.post('/submit', async function (req, res) {
 	}
 });
 
-function checkSubmission(walletID, wordDate, difficulty, answer) {
+async function checkSubmission(walletID, wordDate, difficulty, answer) {
 	const today = new Date();
 	const formattedDate = formatDate(today);
 
@@ -101,24 +106,23 @@ function checkSubmission(walletID, wordDate, difficulty, answer) {
 		case 'medium':
 			return checkMediumSubmission(word, answer);
 		case 'hard':
-			return checkHardSubmission(word, answer);
+			return await checkHardSubmission(word, answer);
 		default:
 			return "forbidden";
 	}
 }
 
 function checkEasySubmission(word, answer) {
-	return word.optans === answer ? "correct" : "incorrect";
+	return word.optans.toLowercase() === answer.toLowercase() ? "correct" : "incorrect";
 }
 
 function checkMediumSubmission(word, answer) {
-	return word.word === answer ? "correct" : "incorrect";
+	return word.word.toLowercase() === answer.toLowercase() ? "correct" : "incorrect";
 }
 
-function checkHardSubmission(word, answer) {
-	const result = OpenAIService.calculateCorrectnessScore(answer, word.def, word.pos);
-	console.log(result)
-	return result;
+async function checkHardSubmission(word, answer) {
+	const result = await OpenAIService.calculateCorrectnessScore(answer, word.def, word.pos);
+	return result > 0.70 ? "correct" : "incorrect";
 }
 
 function formatDate(date) {
