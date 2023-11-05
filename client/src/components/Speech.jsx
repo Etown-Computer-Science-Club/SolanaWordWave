@@ -15,13 +15,27 @@ function handleSpeech(sentence, buttonClicked, setButtonClicked, setButtonColor)
 
         setButtonClicked("Stop Definition");
         setButtonColor("red")
-        startSpeech(sentence);
+        //startSpeech(sentence);
+        let utterance = new SpeechSynthesisUtterance(sentence);
+        speechSynthesis.speak(utterance);
+
+        utterance.onend = function() {
+            setButtonClicked("Speak Definition");
+            setButtonColor("green");
+        };
     }
     else if (buttonClicked == "Speak Word"){
         
         setButtonClicked("Stop Word");
         setButtonColor("red")
-        startSpeech(sentence);
+        
+        let utterance = new SpeechSynthesisUtterance(sentence);
+        speechSynthesis.speak(utterance);
+
+        utterance.onend = function() {
+            setButtonClicked("Speak Word");
+            setButtonColor("green");
+        };
     }
     else if(buttonClicked == "Stop Definition"){
         
