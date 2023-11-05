@@ -73,6 +73,7 @@ const MediumGame = () => {
         <Input 
           placeholder="Type your word here..."
           value={sentence}
+          spellcheck="false"
           onChange={(e) => setSentence(e.target.value)}
         />
         
