@@ -64,15 +64,17 @@ router.post('/submit', async function (req, res) {
 
 			const word = await DbWord.findByPk(wordDate);
 
-			await DbActivity.create({
-				wordDate: wordDate,
-				difficulty: difficulty,
-				walletID: address,
-			});
+			if (submissionStatus !== "forbidden") {
+				await DbActivity.create({
+					wordDate: wordDate,
+					difficulty: difficulty,
+					walletID: address,
+				});
+			}
 
 			const returnedAnswer = difficulty === "medium" ? word.word : word.optans;
 
-			return res.json({ status: submissionStatus, returnedAnswer });
+			return res.json({ status: submissionStatus, answer: returnedAnswer });
 		} else {
 			res.status(400).send('Invalid signature');
 		}
@@ -88,7 +90,7 @@ async function checkSubmission(walletID, wordDate, difficulty, answer) {
 
 	if (formattedDate !== wordDate) return "forbidden";
 
-	const existingActivity = DbActivity.findOne({
+	const existingActivity = await DbActivity.findOne({
 		where: {
 			wordDate: formattedDate,
 			difficulty: difficulty,
@@ -98,7 +100,7 @@ async function checkSubmission(walletID, wordDate, difficulty, answer) {
 
 	if (existingActivity) return "forbidden";
 
-	const word = DbWord.findByPk(formattedDate);
+	const word = await DbWord.findByPk(formattedDate);
 
 	switch (difficulty) {
 		case 'easy':
@@ -113,11 +115,11 @@ async function checkSubmission(walletID, wordDate, difficulty, answer) {
 }
 
 function checkEasySubmission(word, answer) {
-	return word.optans.toLowercase() === answer.toLowercase() ? "correct" : "incorrect";
+	return word.optans.toLowerCase() === answer.toLowerCase() ? "correct" : "incorrect";
 }
 
 function checkMediumSubmission(word, answer) {
-	return word.word.toLowercase() === answer.toLowercase() ? "correct" : "incorrect";
+	return word.word.toLowerCase() === answer.toLowerCase() ? "correct" : "incorrect";
 }
 
 async function checkHardSubmission(word, answer) {
