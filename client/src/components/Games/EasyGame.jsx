@@ -3,12 +3,14 @@ import GameService from "../../services/gameService"
 import { useState, useEffect } from 'react';
 import WordDescription from './WordDescription';
 import PopUp from './PopUp';
+import useSolanaSigner from '../../hooks/useSolanaSigner'
 
 const EasyGame = () => {
 
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [success, setSuccess] = useState({state: '', answer: ''});
-
+	const { address, messageToSign, getSignature } = useSolanaSigner();
+	
   const [data, setData] = useState({
     options: [],
   });

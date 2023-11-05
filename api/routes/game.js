@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-const { PublicKey, sign } = require('@solana/web3.js');
+const { PublicKey } = require('@solana/web3.js');
+const nacl = require('tweetnacl');
 const { RewardService } = require('../services/rewardService');
 const DbActivity = require('../database/models/activity');
 const DbWord = require('../database/models/word');
@@ -31,10 +32,15 @@ router.post('/', async function (req, res) {
 	// const requiredProps = ['signature', 'address', 'message', 'wordDate', 'difficulty', 'answer'];
 
 	try {
-		const { signature, address, message, } = req.body;
-		const publicKey = new PublicKey(address);
+		const { signature, address, message } = req.body;
 
-		if (sign.verify(publicKey, message, signature)) {
+		const decodedPublicKey = new PublicKey(address).toBuffer();
+		const decodedMessage = Buffer.from(message, 'utf8');
+		const decodedSignature = Buffer.from(signature, 'base64');
+
+		const isValid = nacl.sign.detached.verify(decodedMessage, decodedSignature, decodedPublicKey);
+
+		if (isValid) {
 			checkSubmission(walletID, difficulty, answer);
 
 			await RewardService.sendTokens(address, 10);
