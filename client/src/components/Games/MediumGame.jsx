@@ -1,21 +1,24 @@
 import { useState, useEffect } from 'react';
-import { Box, Text, Input, Button, Flex, Spacer, Heading } from '@chakra-ui/react';
+import { Box, Text, Input, Button, Flex, Spacer, Heading, useDisclosure } from '@chakra-ui/react';
 import handleSpeech from '../Speech';
 import GameService from '../../services/gameService';
+import useSolanaSigner from '../../hooks/useSolanaSigner'
+import PopUp from './PopUp';
 //import { Icon } from '@chakra-ui/react';
 //import { FaMicrophone } from 'react-icons/fa';
 
 
 const MediumGame = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const [sentence, setSentence] = useState('');
   const [buttonClicked, setButtonClicked] = useState("Speak Definition");
   const [buttonColor, setButtonColor] = useState("green");
   const [wordButtonClicked, wordSetButtonClicked] = useState("Speak Word");
   const [wordButtonColor, setWordButtonColor] = useState("green");
-  const [data, setData] = useState({
-    options: [],
-  });
-  const walletID = ""
+  const [data, setData] = useState({options: [],});
+  const { address, messageToSign, getSignature } = useSolanaSigner();
+  const [success, setSuccess] = useState({state: '', answer: ''});
+
   
 
   useEffect(() => {
@@ -25,15 +28,24 @@ const MediumGame = () => {
     fetchData()
   }, []);
 
-  function onSentenceSubmit (sentence) {
-    const returned = {
-      word: data.wordOfTheDay,
-      difficulty: "medium",
-      answer: sentence,
-      wordDate: data.wordDate,
-      walletID: walletID
+  async function onSentenceSubmit () {
+    const signature = await getSignature()
+
+    if (!signature){
+      console.error("Failed to get signature from user")
+      return;
     }
-    console.log(`word: ${returned.word} | diff: ${returned.difficulty} | ans: ${returned.answer} | `)
+
+    const message = {
+      signature: signature,
+      address: address,
+      message: messageToSign,
+      wordDate: data.date,
+      difficulty: "medium",
+      answer: sentence
+    }
+    setSuccess(await GameService.submitGame(message))
+    onOpen()
   }
 
   return (
@@ -42,26 +54,31 @@ const MediumGame = () => {
         <Spacer />
         <Heading fontSize="2xl">Medium Mode</Heading>
         <Spacer />
+        </Flex>
+        <Text fontSize="lg" fontWeight="bold">Remember the Word</Text>
+        <Text mb={4}>Spell the word correctly after hearing it.</Text>
+        <Flex columnGap="2px" alignItems="flex-end">
+        <Button mt={4} colorScheme={buttonColor} onClick={() => handleSpeech(data.def, buttonClicked, setButtonClicked, setButtonColor)}>
+          {buttonClicked}
+        </Button>
+        <Button mt={4} colorScheme={wordButtonColor} onClick={() => handleSpeech(data.word, wordButtonClicked, wordSetButtonClicked, setWordButtonColor)}>
+          {wordButtonClicked}
+        </Button>
       </Flex>
-      <Text fontSize="lg" fontWeight="bold">Remember the Word</Text>
-      <Text mb={4}>Spell the word correctly after hearing it.</Text>
-      <Flex columnGap="2px" alignItems="flex-end">
-      <Button mt={4} colorScheme={buttonColor} onClick={() => handleSpeech(data.definition, buttonClicked, setButtonClicked, setButtonColor)}>
-        {buttonClicked}
-      </Button>
-      <Button mt={4} colorScheme={wordButtonColor} onClick={() => handleSpeech(data.wordOfTheDay, wordButtonClicked, wordSetButtonClicked, setWordButtonColor)}>
-        {wordButtonClicked}
-      </Button>
-      
-      <Input 
-        placeholder="Type your word here..."
-        value={sentence}
-        onChange={(e) => setSentence(e.target.value)}
-      />
+
+      <Flex alignItems="baseline">
+        <Button mt={4} colorScheme="teal" onClick={() => onSentenceSubmit(sentence)}>
+          Submit
+        </Button>
+        <Input 
+          placeholder="Type your word here..."
+          value={sentence}
+          onChange={(e) => setSentence(e.target.value)}
+        />
+        
+        
+        <PopUp isOpen={isOpen} onClose={onClose} response={success}/>
       </Flex>
-      <Button mt={4} colorScheme="teal" onClick={() => onSentenceSubmit(sentence)}>
-        Submit
-      </Button>
     </Box>
   );
 };

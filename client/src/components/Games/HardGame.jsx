@@ -38,7 +38,7 @@ const HardGame = () => {
       address: address,
       message: messageToSign,
       wordDate: data.date,
-      difficulty: "easy",
+      difficulty: "hard",
       answer: answer
     }
     setSuccess(await GameService.submitGame(message))
