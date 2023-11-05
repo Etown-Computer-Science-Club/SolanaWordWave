@@ -22,7 +22,12 @@ export default class GameService {
 
 	}
 
-	static async submitGame() {
+	static async submitGame(wordDate, difficulty, answer, walletID, signature) {
+		console.log(`WordDate: ${wordDate} | Difficulty: ${difficulty} | Answer: ${answer} | WalletID: ${walletID} | Signature: ${signature} | `)
 
+		return({
+			state:"Failure",
+			answer:"Insert answer here"
+		})
 	}
 }

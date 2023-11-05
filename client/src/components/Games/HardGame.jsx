@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Box, Text, Input, Button } from '@chakra-ui/react';
+import { Box, Text, Input, Button, useDisclosure } from '@chakra-ui/react';
 import WordDescription from './WordDescription';
 import GameService from '../../services/gameService';
+import PopUp from './PopUp';
 
 const HardGame = () => {
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [success, setSuccess] = useState({state: '', answer: ''});
+
   const [answer, setAnswer] = useState('');
   const [data, setData] = useState({
     options: [],
@@ -18,15 +23,9 @@ const HardGame = () => {
   }, []);
   const walletID = ""
   
-  function onDefinitionSubmit () {
-    const returned = {
-      word: data.wordOfTheDay,
-      difficulty: "hard",
-      answer: answer,
-      wordDate: data.wordDate,
-      walletID: walletID
-    }
-    console.log(`word: ${returned.word} | diff: ${returned.difficulty} | ans: ${returned.answer} | `)
+  async function onDefinitionSubmit () {
+    setSuccess(await GameService.submitGame(data.wordDate, "easy", answer, walletID, ""))
+    onOpen()
   }
 
   return (
@@ -41,6 +40,7 @@ const HardGame = () => {
       <Button mt={4} colorScheme="teal" onClick={() => onDefinitionSubmit(answer)}>
         Submit
       </Button>
+      <PopUp isOpen={isOpen} onClose={onClose} response={success}/>
     </Box>
   );
 };
