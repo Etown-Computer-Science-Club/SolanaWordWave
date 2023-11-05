@@ -30,10 +30,11 @@ const EasyGame = () => {
       signature: signature,
       address: address,
       message: messageToSign,
-      wordDate: data.wordDate,
-      difficulty: data.difficulty,
+      wordDate: data.date,
+      difficulty: "easy",
       answer: selectedOption
     }
+    console.log(message)
     setSuccess(await GameService.submitGame(message))
     onOpen()
   }
