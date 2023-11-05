@@ -1,4 +1,4 @@
-import { Box, Radio, RadioGroup, Stack, Button, useDisclosure } from '@chakra-ui/react';
+import { Box, Radio, RadioGroup, Stack, Button, useDisclosure, Text } from '@chakra-ui/react';
 import GameService from "../../services/gameService"
 import { useState, useEffect } from 'react';
 import WordDescription from './WordDescription';
@@ -41,6 +41,7 @@ const EasyGame = () => {
   return (
     <Box p={5} shadow="md" borderWidth="1px">
       <WordDescription name="Easy Mode" wordOfTheDay={data.word} partOfSpeech={data.pos} definition={data.def} />
+      <Text fontSize="xl" py="2">Select the sentence that uses the word correctly:</Text>
       <RadioGroup onChange={setSelectedOption} value={selectedOption} py="2">
         <Stack direction="column">
           {data.options.map((option, index) => (
