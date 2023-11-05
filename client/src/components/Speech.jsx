@@ -11,7 +11,7 @@ function stopSpeech(){
 }
 
 function handleSpeech(sentence, buttonClicked, setButtonClicked, setButtonColor){
-    if(buttonClicked == "Speak Definition"){
+    if(buttonClicked == "Start Definition"){
 
         setButtonClicked("Stop Definition");
         setButtonColor("red")
@@ -20,11 +20,11 @@ function handleSpeech(sentence, buttonClicked, setButtonClicked, setButtonColor)
         speechSynthesis.speak(utterance);
 
         utterance.onend = function() {
-            setButtonClicked("Speak Definition");
+            setButtonClicked("Start Definition");
             setButtonColor("green");
         };
     }
-    else if (buttonClicked == "Speak Word"){
+    else if (buttonClicked == "Start Word"){
         
         setButtonClicked("Stop Word");
         setButtonColor("red")
@@ -33,18 +33,18 @@ function handleSpeech(sentence, buttonClicked, setButtonClicked, setButtonColor)
         speechSynthesis.speak(utterance);
 
         utterance.onend = function() {
-            setButtonClicked("Speak Word");
+            setButtonClicked("Start Word");
             setButtonColor("green");
         };
     }
     else if(buttonClicked == "Stop Definition"){
         
-        setButtonClicked("Speak Definition");
+        setButtonClicked("Start Definition");
         setButtonColor("green")
         speechSynthesis.cancel();
     }
     else{
-        setButtonClicked("Speak Word");
+        setButtonClicked("Start Word");
         setButtonColor("green")
         speechSynthesis.cancel();
     }

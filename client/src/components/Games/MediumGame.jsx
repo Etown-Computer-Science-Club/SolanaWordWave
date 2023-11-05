@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Text, Input, Button, Flex, Spacer, Heading, useDisclosure } from '@chakra-ui/react';
+import { Box, Text, Input, Button, Flex, Spacer, Heading, useDisclosure, Image } from '@chakra-ui/react';
 import handleSpeech from '../Speech';
 import GameService from '../../services/gameService';
 import useSolanaSigner from '../../hooks/useSolanaSigner'
@@ -11,9 +11,9 @@ import PopUp from './PopUp';
 const MediumGame = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [sentence, setSentence] = useState('');
-  const [buttonClicked, setButtonClicked] = useState("Speak Definition");
+  const [buttonClicked, setButtonClicked] = useState("Start Definition");
   const [buttonColor, setButtonColor] = useState("green");
-  const [wordButtonClicked, wordSetButtonClicked] = useState("Speak Word");
+  const [wordButtonClicked, wordSetButtonClicked] = useState("Start Word");
   const [wordButtonColor, setWordButtonColor] = useState("green");
   const [data, setData] = useState({options: [],});
   const { address, messageToSign, getSignature } = useSolanaSigner();
@@ -59,10 +59,10 @@ const MediumGame = () => {
         <Text mb={4}>Spell the word correctly after hearing it.</Text>
         <Flex columnGap="2px" alignItems="flex-end">
         <Button mt={4} colorScheme={buttonColor} onClick={() => handleSpeech(data.def, buttonClicked, setButtonClicked, setButtonColor)}>
-          {buttonClicked}
+        <Image src="volume.svg" w="6" px="1" />{buttonClicked}
         </Button>
         <Button mt={4} colorScheme={wordButtonColor} onClick={() => handleSpeech(data.word, wordButtonClicked, wordSetButtonClicked, setWordButtonColor)}>
-          {wordButtonClicked}
+        <Image src="volume.svg" w="6" px="1" />{wordButtonClicked}
         </Button>
       </Flex>
 
