@@ -10,7 +10,7 @@ const Footer = () => {
             bgColor="#3d2c8d" 
 						textAlign='center'
         >
-            © 2023 SolWordWave
+            © 2023 WordWave
         </Text>
     );
 };

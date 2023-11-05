@@ -17,7 +17,7 @@ function Navbar() {
 				onClick={() => navigate("/")}
 				_hover={{ cursor: "pointer" }
 			}>
-				SolWordWave
+				WordWave
 			</Text>
 		</Flex>
 		{!isSmallScreen && <Countdown /> }
