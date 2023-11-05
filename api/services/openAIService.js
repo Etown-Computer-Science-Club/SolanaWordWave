@@ -1,15 +1,14 @@
-import OpenAI from 'openai';
+const OpenAI = require('openai-api');
 
 const openai = new OpenAI();
 
-export class GptService {
+class OpenAIService {
 	static async calculateCorrectnessScore(userAnswer, definition, partOfSpeech) {
 		const prompt = `
             Given the definition "${definition}" and part of speech "${partOfSpeech}", rate the correctness of the answer "${userAnswer}" on a scale of 0 to 1 in decimal format. 
-            Always return the result in JSON format. If there's an error or nothing to compare, provide an appropriate error message in the JSON.
+            Always return the result in JSON format. If there's an error or nothing to compare, you should reflect that in the score of the JSON.
             {
                 "score": [score],
-                "error": "[error_message]"
             }
         `;
 
@@ -27,3 +26,5 @@ export class GptService {
 		return jsonResponse;
 	}
 }
+
+module.exports = OpenAIService;
