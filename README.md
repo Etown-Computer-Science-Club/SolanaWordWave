@@ -14,10 +14,10 @@ A daily vocabulary boot on the blockchain. Learn a word a day, powered by Solana
 
 ## Team Members
 
-- [Ethan](https://github.com/ethanlaj)
-- [Steven](https://github.com/Klinefelters)
-- [Toma](https://github.com/yasudat83)
-- [Muz](https://github.com/muzzy3k)
+- [Ethan Lajeunesse](https://github.com/ethanlaj)
+- [Steven Klinefelter](https://github.com/Klinefelters)
+- [Toma Yasuda](https://github.com/yasudat83)
+- [Muz Islam](https://github.com/muzzy3k)
 
 
 ## Getting Started
