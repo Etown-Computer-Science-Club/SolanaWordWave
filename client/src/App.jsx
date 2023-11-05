@@ -8,8 +8,18 @@ import SelectGame from "./components/SelectGame";
 import EasyGame from "./components/Games/EasyGame";
 import MediumGame from "./components/Games/MediumGame";
 import HardGame from "./components/Games/HardGame";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useEffect } from "react";
 
 function App() {
+  const wallet = useWallet();
+
+  useEffect(() => {
+    if (!wallet.connected && wallet.wallet?.readyState === "Installed") {
+      wallet.connect();
+    }
+  }, [wallet]);
+
   return (
     <Router>
       <Flex flexDirection="column" minHeight="100vh">
