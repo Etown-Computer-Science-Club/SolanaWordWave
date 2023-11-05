@@ -9,10 +9,17 @@ import {
     Button
   } from '@chakra-ui/react'
   import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function PopUp ({isOpen, onClose, response}) {
     const [title, setTitle] = useState("");
     const [message, setMessage] = useState("");
+    const navigate = useNavigate();
+
+    function handleClose() {
+      onClose();
+      navigate('/', { replace: true })
+    }
 
     useEffect(() => {
         if (response.status == "correct"){
@@ -31,7 +38,7 @@ export default function PopUp ({isOpen, onClose, response}) {
     
     
     return (
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={handleClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{title}</ModalHeader>
@@ -40,7 +47,7 @@ export default function PopUp ({isOpen, onClose, response}) {
           <ModalBody>{message}</ModalBody>
 
           <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={onClose}>
+            <Button colorScheme='blue' mr={3} onClick={handleClose}>
               Close
             </Button>
           </ModalFooter>
