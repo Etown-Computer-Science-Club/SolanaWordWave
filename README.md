@@ -7,6 +7,7 @@ A daily vocabulary boot on the blockchain. Learn a word a day, powered by Solana
 
 - Solana Blockchain Rewards: Connect your wallet to recieve token rewards for correct answers
 - Decentralized Finances : Use your own Solana wallet to log in, no identifier needed.
+- Open AI Integration : Uses ChatGPT to check your answers.
 - Mobile Compatibility : Designed with mobile devices in mind. When visiting on your mobile browser you have a simple and clean UI
 - User Friendly UI : Using Chakra-UI, we created a simple and easy to use interface
 - Daily Updates : Everyday the word of the day will get updated with new questions and answers.
