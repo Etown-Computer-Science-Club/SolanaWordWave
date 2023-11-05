@@ -1,5 +1,7 @@
 import axios from 'axios';
-const API_URL = 'http://localhost:3001/game';
+const API_URL = process.env.NODE_ENV === 'production'
+	? 'https://api.wordwave.us/game'
+	: 'http://localhost:3001/game';
 
 export default class GameService {
 	static async getGameDetails(details) {
