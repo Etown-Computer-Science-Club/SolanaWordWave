@@ -40,7 +40,7 @@ const EasyGame = () => {
 
   return (
     <Box p={5} shadow="md" borderWidth="1px">
-      <WordDescription name="Easy Mode" wordOfTheDay={data.wordOfTheDay} partOfSpeech={data.partOfSpeach} definition={data.definition} />
+      <WordDescription name="Easy Mode" wordOfTheDay={data.word} partOfSpeech={data.pos} definition={data.def} />
       <RadioGroup onChange={setSelectedOption} value={selectedOption} py="2">
         <Stack direction="column">
           {data.options.map((option, index) => (
