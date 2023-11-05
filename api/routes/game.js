@@ -7,7 +7,13 @@ const DbActivity = require('../database/models/activity');
 const DbWord = require('../database/models/word');
 const OpenAIService = require('../services/openAIService');
 
-router.get('/', async function (_req, res) {
+const TOKENS_TO_SEND = {
+	'easy': 2,
+	'medium': 4,
+	'hard': 6,
+};
+
+router.post('/', async function (_req, res) {
 	const today = new Date();
 	const formattedDate = formatDate(today);
 
@@ -18,7 +24,13 @@ router.get('/', async function (_req, res) {
 			});
 
 		if (word) {
-			res.json(word);
+			res.json({
+				date: word.date,
+				word: word.word,
+				options: [word.opt1, word.opt2, word.opt3, word.opt4],
+				pos: word.pos,
+				def: word.def
+			});
 		} else {
 			res.status(404).json({ message: 'Word not found for today' });
 		}
@@ -28,11 +40,9 @@ router.get('/', async function (_req, res) {
 	}
 });
 
-router.post('/', async function (req, res) {
-	// const requiredProps = ['signature', 'address', 'message', 'wordDate', 'difficulty', 'answer'];
-
+router.post('/submit', async function (req, res) {
 	try {
-		const { signature, address, message } = req.body;
+		const { signature, address, message, wordDate, difficulty, answer } = req.body;
 
 		const decodedPublicKey = new PublicKey(address).toBuffer();
 		const decodedMessage = Buffer.from(message, 'utf8');
@@ -41,21 +51,37 @@ router.post('/', async function (req, res) {
 		const isValid = nacl.sign.detached.verify(decodedMessage, decodedSignature, decodedPublicKey);
 
 		if (isValid) {
-			checkSubmission(walletID, difficulty, answer);
+			const submissionStatus = checkSubmission(address, wordDate, difficulty, answer);
+			if (submissionStatus === "correct") {
+				await RewardService.sendTokens(address, TOKENS_TO_SEND[difficulty]);
+			}
 
-			await RewardService.sendTokens(address, 10);
-			res.send('Token awarded!');
+			return {
+
+			}
+
+			DbActivity.create({
+				wordDate: wordDate,
+				difficulty: difficulty,
+				walletID: address,
+
+			})
+
+			return res.json({ status: submissionStatus });
 		} else {
 			res.status(400).send('Invalid signature');
 		}
 	} catch (error) {
-		console.log(error)
+		console.log(error);
+		res.status(500).send('Internal Server Error');
 	}
 });
 
-function checkSubmission(walletID, difficulty, answer) {
+function checkSubmission(walletID, wordDate, difficulty, answer) {
 	const today = new Date();
 	const formattedDate = formatDate(today);
+
+	if (formattedDate !== wordDate) return "forbidden";
 
 	const existingActivity = DbActivity.findOne({
 		where: {
@@ -65,8 +91,7 @@ function checkSubmission(walletID, difficulty, answer) {
 		}
 	});
 
-	if (existingActivity)
-		return false;
+	if (existingActivity) return "forbidden";
 
 	const word = DbWord.findByPk(formattedDate);
 
@@ -78,17 +103,16 @@ function checkSubmission(walletID, difficulty, answer) {
 		case 'hard':
 			return checkHardSubmission(word, answer);
 		default:
-			return false;
+			return "forbidden";
 	}
-
 }
 
 function checkEasySubmission(word, answer) {
-	return word.optans === answer;
+	return word.optans === answer ? "correct" : "incorrect";
 }
 
 function checkMediumSubmission(word, answer) {
-	return word.word === answer;
+	return word.word === answer ? "correct" : "incorrect";
 }
 
 function checkHardSubmission(word, answer) {

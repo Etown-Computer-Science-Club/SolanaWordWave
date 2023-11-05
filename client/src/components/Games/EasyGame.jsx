@@ -9,29 +9,33 @@ const EasyGame = () => {
 
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [success, setSuccess] = useState({state: '', answer: ''});
+  const [data, setData] = useState({options: [],});
+  const [selectedOption, setSelectedOption] = useState('');
 	const { address, messageToSign, getSignature } = useSolanaSigner();
-	
-  const [data, setData] = useState({
-    options: [],
-  });
 
   useEffect(() => {
-    const fetchData = async () => {
-      setData( await GameService.getGameDetails())
-      console.log(data);
-    };
+    const fetchData = async () => {setData( await GameService.getGameDetails({address: address}))};
     fetchData()
   }, []);
-
-  const [selectedOption, setSelectedOption] = useState('');
-  const walletID = ""
   
- async function onAnswerSubmit () {
+  async function onAnswerSubmit () {
+    const signature = await getSignature()
 
-    setSuccess(await GameService.submitGame(data.wordDate, "easy", selectedOption, walletID, ""))
+    if (!signature){
+      console.error("Failed to get signature from user")
+      return;
+    }
 
+    const message = {
+      signature: signature,
+      address: address,
+      message: messageToSign,
+      wordDate: data.wordDate,
+      difficulty: data.difficulty,
+      answer: selectedOption
+    }
+    setSuccess(await GameService.submitGame(message))
     onOpen()
-    
   }
 
   return (
