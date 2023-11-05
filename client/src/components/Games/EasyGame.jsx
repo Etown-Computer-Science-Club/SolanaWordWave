@@ -1,9 +1,16 @@
-import { Box, Radio, RadioGroup, Stack, Button } from '@chakra-ui/react';
+import { Box, Radio, RadioGroup, Stack, Button, useDisclosure } from '@chakra-ui/react';
 import GameService from "../../services/gameService"
 import { useState, useEffect } from 'react';
 import WordDescription from './WordDescription';
+import PopUp from './PopUp';
+import useSolanaSigner from '../../hooks/useSolanaSigner'
 
 const EasyGame = () => {
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [success, setSuccess] = useState({state: '', answer: ''});
+	const { address, messageToSign, getSignature } = useSolanaSigner();
+	
   const [data, setData] = useState({
     options: [],
   });
@@ -19,20 +26,17 @@ const EasyGame = () => {
   const [selectedOption, setSelectedOption] = useState('');
   const walletID = ""
   
-  function onAnswerSubmit () {
-    const returned = {
-      word: data.wordOfTheDay,
-      difficulty: "easy",
-      answer: selectedOption,
-      wordDate: data.wordDate,
-      walletID: walletID
-    }
-    console.log(`word: ${returned.word} | diff: ${returned.difficulty} | ans: ${returned.answer} | `)
+ async function onAnswerSubmit () {
+
+    setSuccess(await GameService.submitGame(data.wordDate, "easy", selectedOption, walletID, ""))
+
+    onOpen()
+    
   }
 
   return (
     <Box p={5} shadow="md" borderWidth="1px">
-      <WordDescription name="Hard Mode" wordOfTheDay={data.wordOfTheDay} partOfSpeech={data.partOfSpeach} definition={data.definition} />
+      <WordDescription name="Easy Mode" wordOfTheDay={data.wordOfTheDay} partOfSpeech={data.partOfSpeach} definition={data.definition} />
       <RadioGroup onChange={setSelectedOption} value={selectedOption} py="2">
         <Stack direction="column">
           {data.options.map((option, index) => (
@@ -45,6 +49,7 @@ const EasyGame = () => {
       <Button mt={4} colorScheme="teal" onClick={() => onAnswerSubmit(selectedOption)}>
         Submit
       </Button>
+      <PopUp isOpen={isOpen} onClose={onClose} response={success}/>
     </Box>
   );
 };

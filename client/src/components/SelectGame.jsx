@@ -4,7 +4,7 @@ import DifficultyCard from './DifficultyCard';
 import { useNavigate } from 'react-router-dom';
 
 const SelectGame = () => {
-  const [isSmallScreen] = useMediaQuery('(max-width: 900px)');
+	const [isSmallScreen] = useMediaQuery('(max-width: 900px)');
 	const [selectedGame, setSelectedGame] = useState(null);
 	const navigate = useNavigate();
 
