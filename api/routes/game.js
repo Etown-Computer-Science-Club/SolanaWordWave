@@ -123,8 +123,8 @@ function checkMediumSubmission(word, answer) {
 }
 
 async function checkHardSubmission(word, answer) {
-	const result = await OpenAIService.calculateCorrectnessScore(answer, word.def, word.pos);
-	return result > 0.70 ? "correct" : "incorrect";
+	const result = await OpenAIService.calculateCorrectnessScore(word.word, answer, word.def, word.pos);
+	return result.score >= 0.90 ? "correct" : "incorrect";
 }
 
 function formatDate(date) {
