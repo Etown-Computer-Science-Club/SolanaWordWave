@@ -25,7 +25,7 @@ export default function PopUp ({isOpen, onClose, response}) {
         }
         else {
             setTitle("Error")
-            setMessage("Please only sumbit an answer once")
+            setMessage("Please only submit an answer once")
         }
       }, [response.status]);
     
