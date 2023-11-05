@@ -21,6 +21,7 @@ app.use(cors({
     'http://localhost:5173',
     'http://localhost:5000',
     'https://wordwave.us',
+    'https://www.wordwave.us',
     'https://api.wordwave.us',
   ],
 }));
