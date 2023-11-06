@@ -22,7 +22,7 @@ const DifficultyCard = ({ title, description, tokens, handleGameSelect }) => {
 			<Heading size="md" mb={4}>{title}</Heading>
 			<Text mb={6}>{description}</Text>
 			<Text fontSize="2xl" fontWeight="bold" mb={4}>
-				Win {tokens} tokens
+				Earn {tokens} SOL
 			</Text>
 			<Flex my="8">
 				<Spacer/>

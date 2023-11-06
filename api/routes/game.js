@@ -8,9 +8,9 @@ const DbWord = require('../database/models/word');
 const OpenAIService = require('../services/openAIService');
 
 const TOKENS_TO_SEND = {
-	'easy': 2,
-	'medium': 4,
-	'hard': 6,
+	'easy': 0.001,
+	'medium': 0.002,
+	'hard': 0.003,
 };
 
 router.post('/', async function (_req, res) {

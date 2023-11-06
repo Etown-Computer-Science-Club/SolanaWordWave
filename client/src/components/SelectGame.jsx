@@ -28,19 +28,19 @@ const SelectGame = () => {
 				<DifficultyCard
 					title="Easy"
 					description="Select the correct answer from multiple choices."
-					tokens="2"
+					tokens=".001"
 					handleGameSelect={() => handleGameSelect('easy')}
 				/>
 				<DifficultyCard
 					title="Medium"
 					description="Spell the word correctly after hearing it."
-					tokens="4"
+					tokens=".002"
 					handleGameSelect={() => handleGameSelect('medium')}
 				/>
 				<DifficultyCard
 					title="Hard"
 					description="Use the word correctly in a sentence."
-					tokens="6"
+					tokens=".003"
 					handleGameSelect={() => handleGameSelect('hard')}
 				/>
 			</Grid>
