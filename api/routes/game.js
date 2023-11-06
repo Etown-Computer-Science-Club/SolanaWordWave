@@ -59,7 +59,11 @@ router.post('/submit', async function (req, res) {
 		if (isValid) {
 			const submissionStatus = await checkSubmission(address, wordDate, difficulty, answer);
 			if (submissionStatus === "correct") {
-				await RewardService.sendTokens(address, TOKENS_TO_SEND[difficulty]);
+				try {
+					RewardService.sendTokens(address, TOKENS_TO_SEND[difficulty]);
+				} catch (error) {
+					console.log(error);
+				}
 			}
 
 			const word = await DbWord.findByPk(wordDate);
