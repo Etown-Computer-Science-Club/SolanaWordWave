@@ -56,17 +56,17 @@ const MediumGame = () => {
         <Text fontSize="2xl" fontWeight="bold">Remember the Word</Text>
         <Text fontSize="xl" mb={4}>Spell the word correctly after hearing it.</Text>
         <Flex columnGap="2px" alignItems="flex-end">
-        <Button borderRadius ="2xl" h="50" mt={4} colorScheme={buttonColor} onClick={() => handleSpeech(data.def, buttonClicked, setButtonClicked, setButtonColor)}>
+        <Button borderRadius ="2xl" h="30" mt={4} colorScheme={buttonColor} onClick={() => handleSpeech(data.def, buttonClicked, setButtonClicked, setButtonColor)}>
         <Image src="volume.svg" w="7" px="1" /><Text fontSize="xl">{buttonClicked}</Text>
         </Button>
         <Divider orientation='vertical' px='2' />
-        <Button borderRadius ="2xl" h="50" mt={4} colorScheme={wordButtonColor} onClick={() => handleSpeech(data.word, wordButtonClicked, wordSetButtonClicked, setWordButtonColor)}>
+        <Button borderRadius ="2xl" h="30" mt={4} colorScheme={wordButtonColor} onClick={() => handleSpeech(data.word, wordButtonClicked, wordSetButtonClicked, setWordButtonColor)}>
         <Image src="volume.svg" w="7" px="1" /><Text fontSize="xl">{wordButtonClicked}</Text>
         </Button>
       </Flex>
 
       <Flex alignItems="baseline">
-        <Button borderRadius ="2xl" h="50" mt={4} colorScheme="teal" onClick={() => onSentenceSubmit(sentence)}>
+        <Button borderRadius ="2xl" h="30" mt={4} colorScheme="teal" onClick={() => onSentenceSubmit(sentence)}>
         <Text fontSize="xl">Submit</Text>
         </Button>
         <Divider orientation='vertical' px='2' />
@@ -75,7 +75,7 @@ const MediumGame = () => {
           value={sentence}
           spellCheck="false"
           onChange={(e) => setSentence(e.target.value)}
-          h="50"
+          h="30"
           borderRadius="2xl"
         />
         
