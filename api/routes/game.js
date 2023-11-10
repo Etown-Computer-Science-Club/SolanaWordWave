@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const { PublicKey } = require('@solana/web3.js');
 const nacl = require('tweetnacl');
+const moment = require('moment-timezone');
 const { RewardService } = require('../services/rewardService');
 const DbActivity = require('../database/models/activity');
 const DbWord = require('../database/models/word');
@@ -14,7 +15,7 @@ const TOKENS_TO_SEND = {
 };
 
 router.post('/', async function (_req, res) {
-	const today = new Date();
+	const today = newDate();
 	const formattedDate = formatDate(today);
 
 	try {
@@ -89,7 +90,7 @@ router.post('/submit', async function (req, res) {
 });
 
 async function checkSubmission(walletID, wordDate, difficulty, answer) {
-	const today = new Date();
+	const today = newDate();
 	const formattedDate = formatDate(today);
 
 	if (formattedDate !== wordDate) return "forbidden";
@@ -129,6 +130,11 @@ function checkMediumSubmission(word, answer) {
 async function checkHardSubmission(word, answer) {
 	const result = await OpenAIService.calculateCorrectnessScore(word.word, answer, word.def, word.pos);
 	return result.score >= 0.90 ? "correct" : "incorrect";
+}
+
+function newDate() {
+	const date = new Date();
+	return moment(date).tz('America/New_York').toDate();
 }
 
 function formatDate(date) {

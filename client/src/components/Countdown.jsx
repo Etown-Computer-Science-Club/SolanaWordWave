@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Box } from '@chakra-ui/react';
+import moment from 'moment-timezone';
 
 function Countdown() {
   const [timeRemaining, setTimeRemaining] = useState(getTimeRemainingUntilMidnight());
@@ -14,9 +15,14 @@ function Countdown() {
     };
   }, []);
 
+  function newDate() {
+    const date = new Date();
+    return moment(date).tz('America/New_York').toDate();
+  }
+
   function getTimeRemainingUntilMidnight() {
-    const now = new Date();
-    const midnight = new Date();
+    const now = newDate();
+    const midnight = newDate();
     midnight.setHours(24, 0, 0, 0);
     const timeDifference = midnight - now;
 
