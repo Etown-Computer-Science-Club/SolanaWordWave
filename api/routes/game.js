@@ -124,7 +124,7 @@ function checkEasySubmission(word, answer) {
 }
 
 function checkMediumSubmission(word, answer) {
-	return word.word.toLowerCase() === answer.toLowerCase() ? "correct" : "incorrect";
+	return wor.word.toLowerCase() === answer.toLowerCase() ? "correct" : "incorrect";
 }
 
 async function checkHardSubmission(word, answer) {
