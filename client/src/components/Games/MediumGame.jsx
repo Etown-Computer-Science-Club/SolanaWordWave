@@ -4,9 +4,10 @@ import handleSpeech from '../Speech';
 import GameService from '../../services/gameService';
 import useSolanaSigner from '../../hooks/useSolanaSigner'
 import PopUp from './PopUp';
-
+import Loading from '../Loading';
 
 const MediumGame = () => {
+  const [loading, setLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [sentence, setSentence] = useState('');
   const [buttonClicked, setButtonClicked] = useState("Start Definition");
@@ -21,8 +22,10 @@ const MediumGame = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setData( await GameService.getGameDetails())
+      setData( await GameService.getGameDetails());
+      setLoading(false);
     };
+    
     fetchData()
   }, []);
 
@@ -45,6 +48,9 @@ const MediumGame = () => {
     setSuccess(await GameService.submitGame(message))
     onOpen()
   }
+
+  if (loading)
+    return <Loading />
 
   return (
     <Box p={5} shadow="md" borderWidth="1px">

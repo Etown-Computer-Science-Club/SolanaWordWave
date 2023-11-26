@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react';
 import WordDescription from './WordDescription';
 import PopUp from './PopUp';
 import useSolanaSigner from '../../hooks/useSolanaSigner'
+import Loading from '../Loading';
 
 const EasyGame = () => {
-
+  const [loading, setLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [success, setSuccess] = useState({state: '', answer: ''});
   const [data, setData] = useState({options: [],});
@@ -14,7 +15,11 @@ const EasyGame = () => {
 	const { address, messageToSign, getSignature } = useSolanaSigner();
 
   useEffect(() => {
-    const fetchData = async () => {setData( await GameService.getGameDetails({address: address}))};
+    const fetchData = async () => {
+      setData( await GameService.getGameDetails({address: address}));
+      setLoading(false);
+    };
+    
     fetchData()
   }, []);
   
@@ -37,6 +42,9 @@ const EasyGame = () => {
     setSuccess(await GameService.submitGame(message))
     onOpen()
   }
+
+  if (loading)
+    return <Loading />
 
   return (
     <Box p={5} shadow="md" borderWidth="1px">

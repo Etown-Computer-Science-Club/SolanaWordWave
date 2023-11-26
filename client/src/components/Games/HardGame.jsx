@@ -4,9 +4,10 @@ import WordDescription from './WordDescription';
 import GameService from '../../services/gameService';
 import PopUp from './PopUp';
 import useSolanaSigner from '../../hooks/useSolanaSigner'
+import Loading from '../Loading';
 
 const HardGame = () => {
-
+  const [loading, setLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [success, setSuccess] = useState({state: '', answer: ''});
 
@@ -20,7 +21,9 @@ const HardGame = () => {
   useEffect(() => {
     const fetchData = async () => {
       setData( await GameService.getGameDetails())
+      setLoading(false);
     };
+    
     fetchData()
   }, []);
   const walletID = ""
@@ -44,6 +47,9 @@ const HardGame = () => {
     setSuccess(await GameService.submitGame(message))
     onOpen()
   }
+
+  if (loading)
+    return <Loading />
 
   return (
     <Box p={5} shadow="md" borderWidth="1px">

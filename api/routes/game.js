@@ -19,10 +19,16 @@ router.post('/', async function (_req, res) {
 	const formattedDate = formatDate(today);
 
 	try {
-		const word = await DbWord.findByPk(formattedDate,
+		let word = await DbWord.findByPk(formattedDate,
 			{
 				attributes: ['date', 'word', 'opt1', 'opt2', 'opt3', 'opt4', 'pos', 'def']
 			});
+		if (!word) {
+			word = await generateNewWord().catch((error) => {
+				console.error(error);
+				return null;
+			});
+		}
 
 		if (word) {
 			res.json({
@@ -88,6 +94,66 @@ router.post('/submit', async function (req, res) {
 		res.status(500).send('Internal Server Error');
 	}
 });
+
+async function generateNewWord() {
+	/* GptService should return:
+	{
+		"word": [word],
+		"opt1": { // 4 multiple choice options
+			value: [opt1]
+			isAnswer: true/false
+		},	
+		"opt2": {
+			value: [opt2]
+			isAnswer: true/false
+		},
+		"opt3": {
+			value: [opt3]
+			isAnswer: true/false
+		},
+		"opt4": {
+			value: [opt4]
+			isAnswer: true/false
+		},
+		"pos": [pos], // part of speech
+		"def": [def], // definition
+	}`
+	*/
+
+	const tries = 3;
+	let word;
+
+	for (let i = 0; i < tries; i++) {
+		word = await OpenAIService.generateNextWord();
+
+		const requiredFields = ['word', 'opt1', 'opt2', 'opt3', 'opt4', 'pos', 'def'];
+		const missing = requiredFields.filter((field) => !word[field]);
+		const hasAllFields = missing.length === 0;
+		if (!hasAllFields) continue;
+
+		const hasCorrectAnswer = word.opt1.isAnswer || word.opt2.isAnswer || word.opt3.isAnswer || word.opt4.isAnswer;
+		if (!hasCorrectAnswer) continue;
+
+		const existingWord = await DbWord.findOne({ where: { word: word.word } });
+		if (existingWord) continue;
+	}
+
+	if (!word) {
+		throw new Error('Unable to generate new word');
+	}
+
+	return await DbWord.create({
+		date: newDate(),
+		word: word.word,
+		opt1: word.opt1.value,
+		opt2: word.opt2.value,
+		opt3: word.opt3.value,
+		opt4: word.opt4.value,
+		optans: word.opt1.isAnswer ? word.opt1.value : word.opt2.isAnswer ? word.opt2.value : word.opt3.isAnswer ? word.opt3.value : word.opt4.value,
+		pos: word.pos,
+		def: word.def
+	});
+}
 
 async function checkSubmission(walletID, wordDate, difficulty, answer) {
 	const today = newDate();
