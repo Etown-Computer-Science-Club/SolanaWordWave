@@ -1,4 +1,4 @@
-import { Flex, Box } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -8,18 +8,8 @@ import SelectGame from "./components/SelectGame";
 import EasyGame from "./components/Games/EasyGame";
 import MediumGame from "./components/Games/MediumGame";
 import HardGame from "./components/Games/HardGame";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { useEffect } from "react";
 
 function App() {
-  const wallet = useWallet();
-
-  useEffect(() => {
-    if (!wallet.connected && wallet.wallet?.readyState === "Installed") {
-      wallet.connect();
-    }
-  }, [wallet]);
-
   return (
     <Router>
       <Flex flexDirection="column" minHeight="100vh">

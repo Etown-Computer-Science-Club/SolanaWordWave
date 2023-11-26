@@ -30,7 +30,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
       <ConnectionProvider endpoint={endpoint}>
-        <WalletProvider wallets={wallets}>
+        <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
             <App />
           </WalletModalProvider>
