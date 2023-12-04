@@ -1,10 +1,12 @@
 import { Box, Radio, RadioGroup, Stack, Button, useDisclosure, Text } from '@chakra-ui/react';
-import GameService from "../../services/gameService"
 import { useState, useEffect } from 'react';
+import { useWallet } from '@solana/wallet-adapter-react';
+import GameService from "../../services/gameService"
 import WordDescription from './WordDescription';
 import PopUp from './PopUp';
 import useSolanaSigner from '../../hooks/useSolanaSigner'
 import Loading from '../Loading';
+
 
 const EasyGame = () => {
   const [loading, setLoading] = useState(true);
@@ -12,6 +14,7 @@ const EasyGame = () => {
   const [success, setSuccess] = useState({state: '', answer: ''});
   const [data, setData] = useState({options: [],});
   const [selectedOption, setSelectedOption] = useState('');
+  const { connected } = useWallet();
 	const { address, messageToSign, getSignature } = useSolanaSigner();
 
   useEffect(() => {
@@ -24,21 +27,33 @@ const EasyGame = () => {
   }, []);
   
   async function onAnswerSubmit () {
-    const signature = await getSignature()
+    let message;
 
-    if (!signature){
-      console.error("Failed to get signature from user")
-      return;
+    if (connected) {
+      const signature = await getSignature()
+
+      if (!signature){
+        console.error("Failed to get signature from user")
+        return;
+      }
+
+      message = {
+        signature: signature,
+        address: address,
+        message: messageToSign,
+        wordDate: data.date,
+        difficulty: "easy",
+        answer: selectedOption
+      }
+    } else {
+      message = {
+        address: address,
+        wordDate: data.date,
+        difficulty: "easy",
+        answer: selectedOption
+      }
     }
 
-    const message = {
-      signature: signature,
-      address: address,
-      message: messageToSign,
-      wordDate: data.date,
-      difficulty: "easy",
-      answer: selectedOption
-    }
     setSuccess(await GameService.submitGame(message))
     onOpen()
   }

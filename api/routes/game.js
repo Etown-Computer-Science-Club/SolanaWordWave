@@ -2,7 +2,8 @@ var express = require('express');
 var router = express.Router();
 const { PublicKey } = require('@solana/web3.js');
 const nacl = require('tweetnacl');
-const moment = require('moment-timezone');
+const { formatISO } = require('date-fns');
+const { formatInTimeZone } = require('date-fns-tz');
 const { RewardService } = require('../services/rewardService');
 const DbActivity = require('../database/models/activity');
 const DbWord = require('../database/models/word');
@@ -47,12 +48,31 @@ router.post('/', async function (_req, res) {
 	}
 });
 
+router.post('/submitNoWallet', async function (req, res) {
+	const requirements = ['wordDate', 'difficulty', 'answer'];
+	ensureRequirements(req, res, requirements);
+
+	try {
+		const { wordDate, difficulty, answer } = req.body;
+
+		const word = await DbWord.findByPk(wordDate);
+		const submissionStatus = await checkSubmission(word, difficulty, answer);
+
+		let returnedAnswer = null;
+		if (submissionStatus !== "forbidden") {
+			returnedAnswer = getAnswerByDifficulty(word, difficulty);
+		}
+
+		return res.json({ status: submissionStatus, answer: returnedAnswer });
+	} catch (error) {
+		console.log(error);
+		res.status(500).send('Internal Server Error');
+	}
+});
+
 router.post('/submit', async function (req, res) {
 	const requirements = ['signature', 'address', 'message', 'wordDate', 'difficulty', 'answer'];
-	const missing = requirements.filter((param) => !req.body[param]);
-	if (missing.length > 0) {
-		return res.status(400).send(`Missing required parameter(s): ${missing.join(', ')}`);
-	}
+	ensureRequirements(req, res, requirements);
 
 	try {
 		const { signature, address, message, wordDate, difficulty, answer } = req.body;
@@ -64,7 +84,14 @@ router.post('/submit', async function (req, res) {
 		const isValid = nacl.sign.detached.verify(decodedMessage, decodedSignature, decodedPublicKey);
 
 		if (isValid) {
-			const submissionStatus = await checkSubmission(address, wordDate, difficulty, answer);
+			const word = await DbWord.findByPk(wordDate);
+
+			const hasExistingActivity = await isExistingActivity(address, wordDate, difficulty);
+			if (hasExistingActivity) {
+				return res.json({ status: "forbidden" });
+			}
+
+			const submissionStatus = await checkSubmission(word, difficulty, answer);
 			if (submissionStatus === "correct") {
 				try {
 					RewardService.sendTokens(address, TOKENS_TO_SEND[difficulty]);
@@ -72,8 +99,6 @@ router.post('/submit', async function (req, res) {
 					console.log(error);
 				}
 			}
-
-			const word = await DbWord.findByPk(wordDate);
 
 			if (submissionStatus !== "forbidden") {
 				await DbActivity.create({
@@ -83,7 +108,10 @@ router.post('/submit', async function (req, res) {
 				});
 			}
 
-			const returnedAnswer = difficulty === "medium" ? word.word : word.optans;
+			let returnedAnswer = null;
+			if (submissionStatus !== "forbidden") {
+				returnedAnswer = getAnswerByDifficulty(word, difficulty);
+			}
 
 			return res.json({ status: submissionStatus, answer: returnedAnswer });
 		} else {
@@ -155,7 +183,7 @@ async function generateNewWord() {
 	});
 }
 
-async function checkSubmission(walletID, wordDate, difficulty, answer) {
+async function isExistingActivity(walletID, wordDate, difficulty) {
 	const today = newDate();
 	const formattedDate = formatDate(today);
 
@@ -169,10 +197,10 @@ async function checkSubmission(walletID, wordDate, difficulty, answer) {
 		}
 	});
 
-	if (existingActivity) return "forbidden";
+	return existingActivity != null;
+}
 
-	const word = await DbWord.findByPk(formattedDate);
-
+async function checkSubmission(word, difficulty, answer) {
 	switch (difficulty) {
 		case 'easy':
 			return checkEasySubmission(word, answer);
@@ -198,13 +226,24 @@ async function checkHardSubmission(word, answer) {
 	return result.score >= 0.90 ? "correct" : "incorrect";
 }
 
+function getAnswerByDifficulty(word, difficulty) {
+	return difficulty === "medium" ? word.word : word.optans;
+}
+
+function ensureRequirements(req, res, requirements) {
+	const missing = requirements.filter((param) => !req.body[param]);
+	if (missing.length > 0) {
+		return res.status(400).send(`Missing required parameter(s): ${missing.join(', ')}`);
+	}
+}
+
 function newDate() {
 	const date = new Date();
-	return moment(date).tz('America/New_York').toDate();
+	return date;
 }
 
 function formatDate(date) {
-	return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+	return formatInTimeZone(date, 'America/New_York', 'yyyy-MM-dd');
 }
 
 module.exports = router;

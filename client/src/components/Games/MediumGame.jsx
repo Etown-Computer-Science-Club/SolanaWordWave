@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Box, Text, Input, Button, Flex, Spacer, Heading, useDisclosure, Image, Divider } from '@chakra-ui/react';
+import { useWallet } from '@solana/wallet-adapter-react';
 import handleSpeech from '../Speech';
 import GameService from '../../services/gameService';
 import useSolanaSigner from '../../hooks/useSolanaSigner'
@@ -17,8 +18,7 @@ const MediumGame = () => {
   const [data, setData] = useState({options: [],});
   const { address, messageToSign, getSignature } = useSolanaSigner();
   const [success, setSuccess] = useState({state: '', answer: ''});
-
-  
+  const { connected } = useWallet();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,21 +30,32 @@ const MediumGame = () => {
   }, []);
 
   async function onSentenceSubmit () {
-    const signature = await getSignature()
+    let message;
 
-    if (!signature){
-      console.error("Failed to get signature from user")
-      return;
+    if (connected) {
+      const signature = await getSignature()
+
+      if (!signature){
+        console.error("Failed to get signature from user")
+        return;
+      }
+
+      message = {
+        signature: signature,
+        address: address,
+        message: messageToSign,
+        wordDate: data.date,
+        difficulty: "medium",
+        answer: sentence
+      }
+    } else {
+      message = {
+        wordDate: data.date,
+        difficulty: "medium",
+        answer: sentence
+      }
     }
 
-    const message = {
-      signature: signature,
-      address: address,
-      message: messageToSign,
-      wordDate: data.date,
-      difficulty: "medium",
-      answer: sentence
-    }
     setSuccess(await GameService.submitGame(message))
     onOpen()
   }

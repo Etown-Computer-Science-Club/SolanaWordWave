@@ -6,15 +6,19 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
-    Button
-  } from '@chakra-ui/react'
-  import { useState, useEffect } from 'react';
+    Button,
+    Text,
+} from '@chakra-ui/react'
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 export default function PopUp ({isOpen, onClose, response}) {
     const [title, setTitle] = useState("");
     const [message, setMessage] = useState("");
+    const [correctAnswer, setCorrectAnswer] = useState("");
     const navigate = useNavigate();
+    const { connected } = useWallet();
 
     function handleClose() {
       onClose();
@@ -24,11 +28,12 @@ export default function PopUp ({isOpen, onClose, response}) {
     useEffect(() => {
         if (response.status == "correct"){
             setTitle("Congratulations")
-            setMessage("Thank you for playing, you have won tokens!")
+            setMessage(`Thank you for playing, ${connected ? 'you have won tokens' : 'your answer was correct'}!`)
         }
         else if (response.status == "incorrect"){
             setTitle("Better Luck Next Time")
-            setMessage(`The correct answer was ${response.answer}`)
+            setMessage(`The correct answer was:`)
+            setCorrectAnswer(response.answer)
         }
         else {
             setTitle("Error")
@@ -38,13 +43,16 @@ export default function PopUp ({isOpen, onClose, response}) {
     
     
     return (
-        <Modal isOpen={isOpen} onClose={handleClose}>
+      <Modal isOpen={isOpen} onClose={handleClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{title}</ModalHeader>
           <ModalCloseButton />
           
-          <ModalBody>{message}</ModalBody>
+          <ModalBody>
+            <Text>{message}</Text>
+            <Text>{correctAnswer}</Text>
+          </ModalBody>
 
           <ModalFooter>
             <Button colorScheme='blue' mr={3} onClick={handleClose}>

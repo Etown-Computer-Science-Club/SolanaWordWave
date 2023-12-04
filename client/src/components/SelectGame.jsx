@@ -1,11 +1,25 @@
 import React, { useState } from 'react';
-import { Grid, useMediaQuery } from '@chakra-ui/react';
+import {
+	Grid,
+	Modal,
+	ModalOverlay,
+	ModalContent,
+	ModalHeader,
+	ModalFooter,
+	ModalBody,
+	ModalCloseButton,
+	Button,
+	useMediaQuery,
+	useDisclosure,
+} from '@chakra-ui/react'
 import DifficultyCard from './DifficultyCard';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '@solana/wallet-adapter-react';
 
 const SelectGame = () => {
 	const [isSmallScreen] = useMediaQuery('(max-width: 900px)');
+	const { isOpen, onOpen, onClose } = useDisclosure()
+	const [selectedDifficulty, setSelectedDifficulty] = useState('');
 	const navigate = useNavigate();
 	const { connected } = useWallet();
 
@@ -13,8 +27,14 @@ const SelectGame = () => {
 		if (connected) {
 			navigate(`/${difficulty}`);
 		} else {
-			alert('Please connect your wallet to play!');
+			setSelectedDifficulty(difficulty);
+			onOpen();
 		}
+	}
+
+	function handleContinue() {
+		onClose();
+		navigate(`/${selectedDifficulty}`);
 	}
 
   return (
@@ -44,6 +64,24 @@ const SelectGame = () => {
 					handleGameSelect={() => handleGameSelect('hard')}
 				/>
 			</Grid>
+			<Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{'Wallet Not Connected'}</ModalHeader>
+          <ModalCloseButton />
+          
+          <ModalBody>{'Your wallet is currently not connected. Would you like to continue without earning tokens?'}</ModalBody>
+
+          <ModalFooter flex justifyContent='space-between'>
+						<Button colorScheme='gray' mr={3} onClick={onClose}>
+              Go Back
+            </Button>
+            <Button colorScheme='purple' mr={3} onClick={handleContinue}>
+              Continue
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
 		</>
   );
 };

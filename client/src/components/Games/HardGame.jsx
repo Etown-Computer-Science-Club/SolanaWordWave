@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Box, Text, Input, Button, useDisclosure } from '@chakra-ui/react';
+import { useWallet } from '@solana/wallet-adapter-react';
 import WordDescription from './WordDescription';
 import GameService from '../../services/gameService';
 import PopUp from './PopUp';
@@ -10,6 +11,7 @@ const HardGame = () => {
   const [loading, setLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [success, setSuccess] = useState({state: '', answer: ''});
+  const { connected } = useWallet();
 
   const [answer, setAnswer] = useState('');
   const [data, setData] = useState({
@@ -26,24 +28,34 @@ const HardGame = () => {
     
     fetchData()
   }, []);
-  const walletID = ""
   
   async function onDefinitionSubmit () {
-    const signature = await getSignature()
+    let message;
+    
+    if (connected) {
+      const signature = await getSignature()
 
-    if (!signature){
-      console.error("Failed to get signature from user")
-      return;
+      if (!signature){
+        console.error("Failed to get signature from user")
+        return;
+      }
+
+      message = {
+        signature: signature,
+        address: address,
+        message: messageToSign,
+        wordDate: data.date,
+        difficulty: "hard",
+        answer: answer
+      }
+    } else {
+      message = {
+        wordDate: data.date,
+        difficulty: "hard",
+        answer: answer
+      }
     }
 
-    const message = {
-      signature: signature,
-      address: address,
-      message: messageToSign,
-      wordDate: data.date,
-      difficulty: "hard",
-      answer: answer
-    }
     setSuccess(await GameService.submitGame(message))
     onOpen()
   }

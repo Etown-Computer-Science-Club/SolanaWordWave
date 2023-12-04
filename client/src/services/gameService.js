@@ -10,7 +10,9 @@ export default class GameService {
 	}
 
 	static async submitGame(details) {
-		const { data } = await axios.post(`${API_URL}/submit`, details)
+		const endpoint = details.address ? 'submit' : 'submitNoWallet'
+
+		const { data } = await axios.post(`${API_URL}/${endpoint}`, details)
 		return (data)
 	}
 }
