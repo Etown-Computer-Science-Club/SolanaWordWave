@@ -22,7 +22,7 @@ const HardGame = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setData( await GameService.getGameDetails())
+      setData( await GameService.getGameDetails(connected))
       setLoading(false);
     };
     
@@ -31,7 +31,7 @@ const HardGame = () => {
   
   async function onDefinitionSubmit () {
     let message;
-    
+
     if (connected) {
       const signature = await getSignature()
 

@@ -2,8 +2,7 @@ var express = require('express');
 var router = express.Router();
 const { PublicKey } = require('@solana/web3.js');
 const nacl = require('tweetnacl');
-const { formatISO } = require('date-fns');
-const { formatInTimeZone } = require('date-fns-tz');
+const moment = require('moment-timezone');
 const { RewardService } = require('../services/rewardService');
 const DbActivity = require('../database/models/activity');
 const DbWord = require('../database/models/word');
@@ -15,9 +14,20 @@ const TOKENS_TO_SEND = {
 	'hard': 0.003,
 };
 
+router.post('/noWallet', async function (_req, res) {
+	const yesterday = newDate();
+	yesterday.subtract(1, 'days');
+
+	returnGameByDate(res, yesterday);
+})
+
 router.post('/', async function (_req, res) {
 	const today = newDate();
-	const formattedDate = formatDate(today);
+	returnGameByDate(res, today);
+});
+
+async function returnGameByDate(res, date) {
+	const formattedDate = formatDate(date);
 
 	try {
 		let word = await DbWord.findByPk(formattedDate,
@@ -25,7 +35,7 @@ router.post('/', async function (_req, res) {
 				attributes: ['date', 'word', 'opt1', 'opt2', 'opt3', 'opt4', 'pos', 'def']
 			});
 		if (!word) {
-			word = await generateNewWord().catch((error) => {
+			word = await generateNewWord(formattedDate).catch((error) => {
 				console.error(error);
 				return null;
 			});
@@ -46,7 +56,7 @@ router.post('/', async function (_req, res) {
 		console.error(error);
 		res.status(500).json({ message: 'Server error' });
 	}
-});
+}
 
 router.post('/submitNoWallet', async function (req, res) {
 	const requirements = ['wordDate', 'difficulty', 'answer'];
@@ -123,7 +133,7 @@ router.post('/submit', async function (req, res) {
 	}
 });
 
-async function generateNewWord() {
+async function generateNewWord(formattedDate) {
 	/* GptService should return:
 	{
 		"word": [word],
@@ -171,7 +181,7 @@ async function generateNewWord() {
 	}
 
 	return await DbWord.create({
-		date: newDate(),
+		date: formattedDate,
 		word: word.word,
 		opt1: word.opt1.value,
 		opt2: word.opt2.value,
@@ -239,11 +249,11 @@ function ensureRequirements(req, res, requirements) {
 
 function newDate() {
 	const date = new Date();
-	return date;
+	return moment.tz(date, 'America/New_York');
 }
 
 function formatDate(date) {
-	return formatInTimeZone(date, 'America/New_York', 'yyyy-MM-dd');
+	return date.format('yyyy-MM-DD');
 }
 
 module.exports = router;

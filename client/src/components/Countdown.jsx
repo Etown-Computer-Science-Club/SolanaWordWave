@@ -17,13 +17,12 @@ function Countdown() {
 
   function newDate() {
     const date = new Date();
-    return moment(date).tz('America/New_York').toDate();
+    return moment.tz(date, 'America/New_York');
   }
 
   function getTimeRemainingUntilMidnight() {
     const now = newDate();
-    const midnight = newDate();
-    midnight.setHours(24, 0, 0, 0);
+    const midnight = newDate().add(1, 'day').startOf('day');
     const timeDifference = midnight - now;
 
     const hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24);

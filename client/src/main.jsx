@@ -1,8 +1,8 @@
 import { Buffer } from 'buffer';
 window.Buffer = Buffer;
-
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { BrowserRouter as Router } from "react-router-dom";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import {
   ConnectionProvider,
@@ -32,7 +32,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
-            <App />
+            <Router>
+              <App />
+            </Router>
           </WalletModalProvider>
         </WalletProvider>
       </ConnectionProvider>

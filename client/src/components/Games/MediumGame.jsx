@@ -22,7 +22,7 @@ const MediumGame = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setData( await GameService.getGameDetails());
+      setData( await GameService.getGameDetails(connected));
       setLoading(false);
     };
     

@@ -4,8 +4,10 @@ const API_URL = process.env.NODE_ENV === 'production'
 	: 'http://localhost:3001/game';
 
 export default class GameService {
-	static async getGameDetails(details) {
-		const { data } = await axios.post(API_URL, details)
+	static async getGameDetails(isConnected, details) {
+		const endpoint = isConnected ? '' : '/noWallet'
+
+		const { data } = await axios.post(API_URL + endpoint, details)
 		return (data)
 	}
 

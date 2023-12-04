@@ -19,7 +19,7 @@ const EasyGame = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setData( await GameService.getGameDetails({address: address}));
+      setData( await GameService.getGameDetails(connected, { address: address }));
       setLoading(false);
     };
     
