@@ -16,7 +16,7 @@
     "http-errors": "~1.6.3",
     "moment-timezone": "^0.5.43",
     "morgan": "~1.9.1",
-    "mysql2": "^3.6.3",
+    "mysql2": "^3.9.4",
     "openai": "^4.15.3",
     "sequelize": "^6.34.0",
     "tweetnacl": "^1.0.3"
